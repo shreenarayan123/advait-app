@@ -26,3 +26,36 @@ interactionRouter.post('/', authMiddleware, async (req: AuthRequest, res) => {
         return res.status(500).json({ message: 'Error creating interaction' });
     }
 }); 
+
+interactionRouter.get('/', authMiddleware, async (req: AuthRequest, res) => {
+    const userId = req.userId;
+
+    if (!userId) {
+        return res.status(403).json({ message: "User not authenticated" });
+    }
+
+    try {
+        const interactions = await prisma.interaction.findMany({
+            where: {
+                createdById: userId,
+            },
+            include: {
+                customer: {
+                    select: {
+                        id: true,
+                        name: true,
+                        company: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        return res.json(interactions);
+    } catch (error) {
+        console.error("Error fetching interactions:", error);
+        return res.status(500).json({ message: 'Error fetching interactions' });
+    }
+});

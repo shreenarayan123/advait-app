@@ -5,13 +5,11 @@ import { authMiddleware, AuthRequest } from '../middleware';
 export const customerMemoryRouter = express.Router();
 const prisma = new PrismaClient();
 
-// Test route to verify the endpoint is working
 customerMemoryRouter.get('/test', (req, res) => {
     console.log('Customer memory test route hit');
     res.json({ message: 'Customer memory router is working' });
 });
 
-// Update customer memory with AI insights
 customerMemoryRouter.put('/:customerId', authMiddleware, async (req: AuthRequest, res) => {
     const userId = req.userId;
     const customerId = req.params.customerId;
@@ -27,7 +25,7 @@ customerMemoryRouter.put('/:customerId', authMiddleware, async (req: AuthRequest
     }
     
     try {
-        // Check if the customer exists and belongs to the user
+        
         const customer = await prisma.customer.findUnique({
             where: { id: customerId },
         });
