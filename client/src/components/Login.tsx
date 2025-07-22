@@ -13,7 +13,7 @@ const formSchema = z.object({
     password: z.string().min(6, 'Password must be at least 6 characters long'),
 })
 const Login = () => {
-    const { createUser } = useUser();
+    const { signin } = useUser();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -23,7 +23,7 @@ const Login = () => {
     })
     function onSubmit(values: z.infer<typeof formSchema>) {
        
-        createUser(values);
+        signin(values);
         console.log(values)
     }
   return (

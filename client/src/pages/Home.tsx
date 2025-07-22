@@ -1,11 +1,15 @@
+import Sidebar from "../components/Sidebar";
+import { Outlet, Navigate } from "react-router-dom";
 
-
-type Props = {}
-
-const Home = (props: Props) => {
+const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1 p-4 h-screen overflow-y-scroll">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
 
-export default Home
+export default Home;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -15,21 +15,26 @@ export const useUser = () => {
   } | null>(null);
   const navigate = useNavigate();
 
-  const createUser = async (values: User) => {
+  const signin = async (values: User) => {
     try {
       const response = await fetch(`${backendUrl}/user/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          username: values.email,
+          password: values.password,
+        }),
       });
       if (!response.ok) {
+        console.error('Failed to sign in:', response);
         throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
-      setUser(data);
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
       navigate('/home', { replace: true });
     } catch (error) {
       console.error('Failed to fetch user:', error);
@@ -37,5 +42,5 @@ export const useUser = () => {
     }
   };
 
-  return { user, createUser };
+  return { user, signin };
 }

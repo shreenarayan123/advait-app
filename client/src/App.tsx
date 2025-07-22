@@ -1,26 +1,34 @@
 
 import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router'
-import Home from './pages/Home'
-import Dashboard from './pages/Dashboard'
-import SignIn from './pages/SignIn'
-import Contacts from './pages/Contacts'
-import Customer from './pages/Customer'
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
+import SignIn from "./pages/SignIn";
+import Contacts from "./pages/Contacts";
+import Dashboard from "./pages/Dashboard";
+import AIOverview from "./pages/AIOverview";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Customer from './pages/Customer';
 
-function App() {
+const App = () => {
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/">
+        <Route index element={<SignIn />} />
+        <Route path="signin" element={<SignIn />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="home" element={<Home />}>
+            <Route index element={<Navigate to="dashboard" />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="contacts" element={<Contacts />} />
+            <Route path="ai-overview" element={<AIOverview/>} />
+            <Route path="contacts/:id" element={<Customer />} />
+          </Route>
+        </Route>
+      </Route>
+    )
+  );
 
-  return (
-   <BrowserRouter>
-     <Routes>
-       <Route path="/" element={<SignIn />} />
-       <Route path="/home" element={<Home />} />
-       <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/contacts" element={<Contacts />} />
-        <Route path="/contacts/:id" element={<Customer />} />
-        <Route path="*" element={<div>404 Not Found</div>} />
-     </Routes>
-   </BrowserRouter>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
