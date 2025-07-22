@@ -30,10 +30,11 @@ userRouter.post('/signup', async (req, res) => {
         password: body.password,
       },
     });
-
+    console.log('User created:', user);
     const token = jwt.sign({ id: user.id }, JWT_SECRET);
-    return res.json({ jwt: token, user }).status(201);
+    return res.json({ token: token, user }).status(201);
   } catch (error) {
+    console.log('Error while signing up:', error);
     return res.status(403).json({ message: 'Error while signing up' });
   }
 });
@@ -53,7 +54,7 @@ userRouter.post('/signin', async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET);
-    return res.json({ jwt: token, user });
+    return res.json({ token: token, user });
   } catch (error) {
     return res.status(411).json({ message: 'Error while signing in' });
   }
