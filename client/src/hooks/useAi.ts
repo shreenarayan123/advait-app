@@ -30,7 +30,7 @@ export const useAi = () => {
   useEffect(() => {
     if (!customer?.interactions || customer.interactions.length === 0) return;
     
-    // Only run AI analysis if the number of interactions has changed
+   
     if (customer.interactions.length === lastAnalyzedCount) return;
     
     console.log(`Running AI analysis for ${customer.interactions.length} interactions (was ${lastAnalyzedCount})`);
@@ -84,10 +84,7 @@ Return a JSON object with the following fields:
         setLastAnalyzedCount(customer.interactions.length);
 
         // Automatically save insights to database
-        try {
-          console.log('About to update customer memory with:', newInsights);
-          console.log('Customer ID:', customer.id);
-          
+        try {          
           const dataToSend = {
             preferences: newInsights.preferences && newInsights.preferences.trim() !== '' ? newInsights.preferences : undefined,
             objections: newInsights.objections && newInsights.objections.trim() !== '' ? newInsights.objections : undefined,
@@ -101,7 +98,6 @@ Return a JSON object with the following fields:
           console.log("Customer memory updated successfully:", result);
         } catch (memoryError) {
           console.error("Failed to update customer memory:", memoryError);
-          // Don't throw here, just log the error so AI insights still work
         }
       } catch (err: any) {
         setAiError(err.message || "Failed to generate insights");

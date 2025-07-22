@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Users, BrainCircuit, Bot } from "lucide-react";
+import { LayoutDashboard, Users,Bot } from "lucide-react";
 
 const Sidebar = () => {
   return (
@@ -31,20 +31,9 @@ const Sidebar = () => {
           <Users className="h-5 w-5 mr-3" />
           Contacts
         </NavLink>
-        <NavLink
-          to="/home/ai-overview"
-          className={({ isActive }) =>
-            `flex items-center py-2.5 px-4 rounded-lg transition duration-200 hover:bg-purple-100 ${
-              isActive ? "bg-purple-200 text-purple-800" : ""
-            }`
-          }
-        >
-          <BrainCircuit className="h-5 w-5 mr-3" />
-          AI Overview
-        </NavLink>
       </nav>
     </div>
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

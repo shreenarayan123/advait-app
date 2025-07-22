@@ -42,7 +42,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onSuccess }) =
       await createCustomer(values);
       onSuccess();
     } catch (err) {
-      // Error is already handled in the hook
+      console.error("Error creating customer:", err);
     }
   };
 

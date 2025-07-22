@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 export interface AddNoteData {
-  type: string; // Should be 'NOTE'
+  type: string; 
   content: string;
   customerId: string;
 }
