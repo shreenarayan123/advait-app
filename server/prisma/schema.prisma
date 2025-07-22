@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  customers    Customer[]
+  deals        Deal[]
+  activities   Activity[]
+  interactions Interaction[]
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  company   String
+  email     String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deleted   Boolean  @default(false)
+
+  // Relationships
+  createdBy    User            @relation(fields: [createdById], references: [id])
+  createdById  String
+  interactions Interaction[]
+  deals        Deal[]
+  memory       CustomerMemory?
+  files        File[]
+  Activity     Activity[]
+}
+
+model Deal {
+  id        String    @id @default(uuid())
+  title     String
+  amount    Float?
+  stage     DealStage
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  assignedTo   User   @relation(fields: [assignedToId], references: [id])
+  assignedToId String
+}
+
+enum DealStage {
+  LEAD
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+model Interaction {
+  id        String          @id @default(uuid())
+  type      InteractionType
+  content   String // Raw notes
+  aiSummary String? // Summarized by AI
+  createdAt DateTime        @default(now())
+
+  // Relations
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String
+}
+
+enum InteractionType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+}
+
+model CustomerMemory {
+  id            String   @id @default(uuid())
+  preferences   String? // JSON or stringified
+  objections    String?
+  buyingSignals String?
+  confidence    Float    @default(1.0)
+  updatedAt     DateTime @updatedAt
+
+  // Relation
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String   @unique
+}
+
+model Activity {
+  id          String       @id @default(uuid())
+  type        ActivityType
+  description String
+  timestamp   DateTime     @default(now())
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String
+}
+
+enum ActivityType {
+  CUSTOMER_CREATED
+  DEAL_UPDATED
+  INTERACTION_ADDED
+  MEMORY_UPDATED
+}
+
+model File {
+  id         String   @id @default(uuid())
+  url        String
+  type       FileType
+  uploadedAt DateTime @default(now())
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+}
+
+enum FileType {
+  RECORDING
+  CONTRACT
+  DOCUMENT
+  EXPORT
+}
