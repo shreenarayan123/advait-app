@@ -6,7 +6,6 @@ export const customerMemoryRouter = express.Router();
 const prisma = new PrismaClient();
 
 customerMemoryRouter.get('/test', (req, res) => {
-    console.log('Customer memory test route hit');
     res.json({ message: 'Customer memory router is working' });
 });
 
@@ -14,11 +13,6 @@ customerMemoryRouter.put('/:customerId', authMiddleware, async (req: AuthRequest
     const userId = req.userId;
     const customerId = req.params.customerId;
     const { preferences, objections, buyingSignals, confidence } = req.body;
-    
-    console.log('Customer Memory Update Request:');
-    console.log('- Customer ID:', customerId);
-    console.log('- User ID:', userId);
-    console.log('- Request body:', req.body);
     
     if (!userId) {
         return res.status(403).json({ message: "User not authenticated" });
@@ -59,7 +53,6 @@ customerMemoryRouter.put('/:customerId', authMiddleware, async (req: AuthRequest
             },
         });
         
-        console.log('Customer memory upserted successfully:', customerMemory);
         return res.json(customerMemory);
     } catch (error) {
         console.error("Error updating customer memory:", error);

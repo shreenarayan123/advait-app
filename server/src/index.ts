@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const corsOptions = {
-  origin: 'http://localhost:5173', // Vite dev server default port
+  origin: process.env.CLIENT_URL, // Vite dev server default port
   credentials: true,
 };
 
