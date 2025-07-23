@@ -7,6 +7,7 @@ interface DashboardStats {
   totalDealValue: number;
   totalInteractions: number;
   dealsByStage: { name: string; value: number; color: string }[];
+  totalRevenue: number;
   loading: boolean;
   error: string | null;
 }
@@ -24,6 +25,7 @@ export const useDashboardStats = (): DashboardStats => {
   const [totalDeals, setTotalDeals] = useState(0);
   const [totalDealValue, setTotalDealValue] = useState(0);
   const [totalInteractions, setTotalInteractions] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
   const [dealsByStage, setDealsByStage] = useState<
     { name: string; value: number; color: string }[]
   >([]);
@@ -72,6 +74,18 @@ export const useDashboardStats = (): DashboardStats => {
             totalAmount += deal.amount;
           }
         }
+        interface Deal {
+          stage: string;
+          amount?: number;
+        }
+
+        const totalRevenue = deals
+          .filter((deal: Deal) => deal.stage === "CLOSED_WON")
+          .reduce(
+            (sum: number, deal: Deal): number => sum + (deal.amount || 0),
+            0
+          );
+        setTotalRevenue(totalRevenue);
         const pieData = Object.entries(dealStageCount).map(
           ([stage, value]) => ({
             name: stage,
@@ -102,6 +116,7 @@ export const useDashboardStats = (): DashboardStats => {
     totalDealValue,
     totalInteractions,
     dealsByStage,
+    totalRevenue,
     loading,
     error,
   };

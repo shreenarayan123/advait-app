@@ -3,6 +3,8 @@ import { StatCard } from "./StatCard";
 import { DealsPieChart } from "./DealsPieChart";
 import { InteractionsCard } from "./InteractionsCard";
 import { useDashboardStats } from "../../hooks/useDashboadStats";
+import { RevenueCard } from "./RevenueCard";
+import { formatCurrencyShort } from "@/lib/utils";
 
 export const CRMDashboard = () => {
   const { totalCustomers, totalDeals, totalDealValue   } = useDashboardStats();
@@ -33,7 +35,7 @@ export const CRMDashboard = () => {
           />
           <StatCard
             title="Pipeline Value"
-            value={totalDealValue.toString()}
+            value={formatCurrencyShort(totalDealValue)}
             icon={DollarSign}
             growth={{ value: 12.5, trend: "up" }}
             variant="warning"
@@ -43,7 +45,10 @@ export const CRMDashboard = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <DealsPieChart />
-          <InteractionsCard />
+         <div className="grid grid-rows-2 md:grid-rows-2 gap-6">
+           <InteractionsCard />
+          <RevenueCard />
+         </div>
         </div>
       </div>
     </div>
