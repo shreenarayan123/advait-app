@@ -35,7 +35,6 @@ const Customer = () => {
   if (loading) return <p>Loading customer...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
   if (!customer) return <p>Customer not found.</p>;
-
   const handleStageChange = (dealId: string, newStage: string) => {
     setDealStages(prev => ({ ...prev, [dealId]: newStage }));
     setHasChanges(true);

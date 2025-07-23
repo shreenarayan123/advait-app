@@ -13,20 +13,16 @@ export const useUpdateCustomerMemory = () => {
   const [error, setError] = useState<string | null>(null);
 const backendUrl = import.meta.env.VITE_API_URL;
   const updateCustomerMemory = useCallback(async (customerId: string, data: UpdateCustomerMemoryData) => {
-    console.log('Updating customer memory for customer:', customerId);
-    console.log('Data being sent:', data);
     
     setLoading(true);
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      console.log('Token exists:', !!token);
 
       const response = await axios.put(`${backendUrl}/customer-memory/${customerId}`, data, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
-      console.log('Customer memory update response:', response.data);
+ 
       return response.data;
     } catch (err: any) {
       console.error('Error updating customer memory:', err);

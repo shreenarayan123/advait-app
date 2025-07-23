@@ -79,7 +79,6 @@ export const useDashboardStats = (): DashboardStats => {
             color: chartColors[stage],
           })
         );
-        console.log("Dashboard stats fetched successfully", customers);
         setTotalCustomers(customers.length);
         setTotalDeals(deals.length);
         setTotalDealValue(totalAmount);

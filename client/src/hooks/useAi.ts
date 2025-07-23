@@ -29,11 +29,12 @@ export const useAi = () => {
 
   useEffect(() => {
     if (!customer?.interactions || customer.interactions.length === 0) return;
-    
-   
+
     if (customer.interactions.length === lastAnalyzedCount) return;
-    
-    console.log(`Running AI analysis for ${customer.interactions.length} interactions (was ${lastAnalyzedCount})`);
+
+    console.log(
+      `Running AI analysis for ${customer.interactions.length} interactions (was ${lastAnalyzedCount})`
+    );
 
     const ai = new GoogleGenAI({
       apiKey: import.meta.env.VITE_GEMINI_API_KEY,
@@ -47,16 +48,24 @@ export const useAi = () => {
         const response = await ai.models.generateContent({
           model: "gemini-2.5-flash",
           contents: `
-You are a sales CRM assistant. Analyze the following customer interactions and extract structured insights.
+You are a sales CRM assistant. Analyze ALL customer interactions chronologically and provide comprehensive, up-to-date insights.
 
-Interactions: ${JSON.stringify(customer.interactions)}
+Customer Interactions (chronological order): ${JSON.stringify(
+            customer.interactions
+          )}
 
-Return a JSON object with the following fields:
+Analyze ALL interactions and provide current status. Focus on:
+- Latest preferences and requirements
+- Current objections or concerns
+- Most recent buying signals and next steps
+- Overall deal progression
+
+Return a JSON object with concise and short current insights:
 {
-  "preferences": string,
-  "objections": string,
-  "buyingSignals": string,
-  "confidence": number (0.0 - 1.0)
+  "preferences": "Current preferences including latest requirements and plan details",
+  "objections": "Current objections or blockers based on all interactions", 
+  "buyingSignals": "Latest buying signals and immediate next steps",
+  "confidence": number (0.0 - 1.0 based on deal progression)
 }
 `,
         });
@@ -66,10 +75,25 @@ Return a JSON object with the following fields:
         }
 
         const text = await response.text;
-        console.log("AI Response:", text);
-        const jsonStart = text.indexOf("{");
-        const json = JSON.parse(text.slice(jsonStart));
-        console.log("AI Insights:", json);
+       
+        let jsonStr = text.trim();
+
+        
+        if (jsonStr.startsWith("```json")) {
+          jsonStr = jsonStr.replace(/```json\s*/, "").replace(/\s*```$/, "");
+        } else if (jsonStr.startsWith("```")) {
+          jsonStr = jsonStr.replace(/```\s*/, "").replace(/\s*```$/, "");
+        }
+
+        
+        const jsonStart = jsonStr.indexOf("{");
+        const jsonEnd = jsonStr.lastIndexOf("}") + 1;
+
+        if (jsonStart === -1 || jsonEnd === 0) {
+          throw new Error("No valid JSON found in AI response");
+        }
+
+        const json = JSON.parse(jsonStr.slice(jsonStart, jsonEnd));
 
         const newInsights = {
           preferences: json.preferences ?? null,
@@ -79,23 +103,30 @@ Return a JSON object with the following fields:
         };
 
         setInsights(newInsights);
-        
+
         // Update the count to prevent re-analysis
         setLastAnalyzedCount(customer.interactions.length);
 
-        // Automatically save insights to database
-        try {          
+        
+        try {
           const dataToSend = {
-            preferences: newInsights.preferences && newInsights.preferences.trim() !== '' ? newInsights.preferences : undefined,
-            objections: newInsights.objections && newInsights.objections.trim() !== '' ? newInsights.objections : undefined,
-            buyingSignals: newInsights.buyingSignals && newInsights.buyingSignals.trim() !== '' ? newInsights.buyingSignals : undefined,
+            preferences:
+              newInsights.preferences && newInsights.preferences.trim() !== ""
+                ? newInsights.preferences
+                : undefined,
+            objections:
+              newInsights.objections && newInsights.objections.trim() !== ""
+                ? newInsights.objections
+                : undefined,
+            buyingSignals:
+              newInsights.buyingSignals &&
+              newInsights.buyingSignals.trim() !== ""
+                ? newInsights.buyingSignals
+                : undefined,
             confidence: newInsights.confidence,
           };
-          
-          console.log('Data being sent to API:', dataToSend);
-          
-          const result = await updateCustomerMemory(customer.id, dataToSend);
-          console.log("Customer memory updated successfully:", result);
+
+         await updateCustomerMemory(customer.id, dataToSend);
         } catch (memoryError) {
           console.error("Failed to update customer memory:", memoryError);
         }
@@ -107,7 +138,7 @@ Return a JSON object with the following fields:
     };
 
     runAI();
-  }, [customer?.interactions?.length, customer?.id]);
+  }, [customer?.interactions?.length, customer?.id, updateCustomerMemory]);
 
   return { insights, aiLoading, aiError };
 };

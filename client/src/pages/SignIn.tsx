@@ -1,14 +1,11 @@
-import Login from "../components/Login"
+import Login from "../components/Login";
 
-
-type Props = {}
-
-const SignIn = (props: Props) => {
+const SignIn = () => {
   return (
     <div className="flex items-center justify-center h-screen">
-    <Login />
+      <Login />
     </div>
-  )
-}
+  );
+};
 
-export default SignIn
+export default SignIn;
