@@ -80,3 +80,12 @@ npm run dev
 
 - Frontend runs on `http://localhost:5173`
 - Backend runs on `http://localhost:3000`
+
+## Project Architecture
+![workflow](https://github.com/user-attachments/assets/7143f60e-7ffb-4af6-bab1-e6dc29f2f7b0)
+
+## ER Diagram
+![er_diagram](https://github.com/user-attachments/assets/c502814e-5ed8-4f30-be3e-9dd5ce32db0a)
+
+## User sequence Diagram
+![user_sequence](https://github.com/user-attachments/assets/abf086c7-d371-443f-aa99-c0081f3a6e13)
